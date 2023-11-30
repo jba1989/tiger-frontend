@@ -1,86 +1,60 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { reactive, computed } from "vue";
+import Form from "./components/Form.vue";
+import TigerView from "./views/TigerView.vue";
+
+interface FormType {
+  sessionId: string;
+  destination: Array<string>;
+  since: string;
+  until: string;
+}
+
+const form: FormType = reactive({
+  sessionId: "",
+  destination: [],
+  since: "2024-03-30",
+  until: "2024-05-30",
+});
+
+const active = computed(() => form.sessionId !== "" && form.destination.length > 0);
+
+async function updateForm(newForm: FormType) {
+  form.sessionId = newForm.sessionId;
+  form.destination = newForm.destination;
+  form.since = newForm.since;
+  form.until = newForm.until;
+}
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/tiger">Tiger</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+      <Form @submit="updateForm" />
     </div>
   </header>
 
-  <RouterView />
+  <main>
+    <TigerView v-if="active" :form="form" />
+  </main>
 </template>
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  padding: 10px;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+main {
+  position: relative;
+  left: 300px;
+  width: calc(100% - 300px);
+  display: grid;
+  grid-row-gap: 30px;
+  grid-column-gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
 }
 </style>
